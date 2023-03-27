@@ -49,7 +49,7 @@ export const ItemCard = ({ data, setCheckoutPrice }) => {
 
     return (
         <CartCard>
-            <FlexContainer flexDirection='column'>
+            <FlexContainer flexDirection='column' directionMobile='column'>
                 <ImgDiv>
                     <ImgComponent src={data?.image[0]} />
                 </ImgDiv>
@@ -63,7 +63,7 @@ export const ItemCard = ({ data, setCheckoutPrice }) => {
                     </IconButton>
                 </FlexContainer>
             </FlexContainer>
-            <FlexContainer flexDirection='column' alignItems='flex-start' gap='1rem'>
+            <FlexContainer flexDirection='column' alignItems='flex-start' gap='1rem' directionMobile='column'>
                 <Texth3>
                     {data?.name}
                 </Texth3>

@@ -10,6 +10,7 @@ import { useParams } from 'react-router-dom'
 import { useOneProductData } from '../../../hooks/useOneProductData'
 import { useDispatch } from 'react-redux'
 import { addToCart } from '../../../redux/cart/cartSlice'
+import { devices } from '../../../styles/breakpoints'
 
 export const ProductContainer = styled(Container)`
     padding: 20px;
@@ -17,6 +18,10 @@ export const ProductContainer = styled(Container)`
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
     border-radius: 30px;
     align-items: stretch;
+    @media ${devices.tabletM} {
+        flex-direction: column;
+        padding: 8px 12px;
+    }
 `
 
 const DescriptionContainer = styled(Container)`
@@ -26,6 +31,10 @@ const DescriptionContainer = styled(Container)`
     flex-direction: column;
     align-items: flex-start;
     justify-content: space-between;
+    @media ${devices.tabletM} {
+        width: 100%;
+        padding: 1rem 0;
+    }
 
 `
 

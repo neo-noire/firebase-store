@@ -1,51 +1,65 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Container } from '../../Layout/Navbar/Navbar'
-import airpodsPro from '../../../assets/airpodsPro.png'
-import heroLogo from '../../../assets/hero-logo.png'
-import reactSVG from '../../../assets/react.svg'
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from 'react-icons/ai'
 import { IconButton } from '../../../styles/styles'
+import { devices } from '../../../styles/breakpoints'
+import useMediaQuery from '@mui/material/useMediaQuery';
 
-
-const MainImageContainer = styled.div`
+export const MainImageContainer = styled.div`
     position: relative;
-    width: 50%;
-    height: 60vh;
+    width:${p => p.width || '50%'};
+    height:${p => p.height || '60vh'};
     /* background-color: #b5b5b5c5; */
-    border-right: 1px solid #b5b5b563;
+    border-right:${p => p.borderRight || '1px solid #b5b5b563'};
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 1rem;
-    
+    @media ${devices.tabletM} {
+        width: 100%;
+        border-right:none;
+
+    };
+
+    @media (max-width: 480px) {
+        height: 100%;
+    }
 `
 
-const SliderContainer = styled(Container)`
+export const SliderContainer = styled(Container)`
     height: 20%;
     width: 75%;
     display: flex;
     justify-content: center;
     overflow-x: auto;
+    @media (max-width: 480px) {
+        justify-content: flex-start;
+        width: 85%;
+        gap: 0;
+    }
 `
 
-const BigImage = styled.img`
+export const BigImage = styled.img`
     height: 100%;
     max-width: 100%;
     object-fit:contain;
 `
 
-const SmallImage = styled.img`
+export const SmallImage = styled.img`
     height: 100%;
     /* width: fit-content; */
     object-fit: contain;
     cursor: pointer;
     border-radius: 8px;
     border: ${props => props.active || 'none'};
+    @media (max-width: 480px) {
+        border: none;
+    }
 `
 
-const ArrowContainer = styled(Container)`
+export const ArrowContainer = styled(Container)`
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -54,32 +68,20 @@ const ArrowContainer = styled(Container)`
     left: 10%;
     right: 10%;
     justify-content: space-between;
-    
+   
 `
 
-const ArrowBtn = styled(IconButton)`
+export const ArrowBtn = styled(IconButton)`
    background-color: #c6c6c6bc;   
    &:hover {
        background-color: #a1a1a1bb;
        color: black;
    }
 `
-const data = [
-    {
-        imgUrl: airpodsPro,
-    },
-    {
-        imgUrl: heroLogo,
-    },
-    {
-        imgUrl: reactSVG,
-    },
-    {
-        imgUrl: airpodsPro,
-    }
-]
+
 export const Slider = ({ image }) => {
-    const [firstImg, setFirstImg] = useState(data[0])
+    const matches = useMediaQuery('(min-width:480px)');
+    const [firstImg, setFirstImg] = useState([])
     const [allImgs, setAllImgs] = useState([])
     const [currentImgIndex, setCurrentImgIndex] = useState(0)
 
@@ -100,9 +102,14 @@ export const Slider = ({ image }) => {
 
     return (
         <MainImageContainer>
-            <BigImage
-                src={firstImg}
-            />
+            {
+                matches &&
+                <div style={{ height: '70%' }}>
+                    <BigImage
+                        src={firstImg}
+                    />
+                </div>
+            }
             <SliderContainer>
                 {
                     allImgs && allImgs?.map((item, idx) =>
@@ -115,14 +122,17 @@ export const Slider = ({ image }) => {
                             key={idx} src={item} />)
                 }
             </SliderContainer>
-            <ArrowContainer>
-                <ArrowBtn onClick={prevImgHandler}>
-                    <AiOutlineArrowLeft size={20} />
-                </ArrowBtn>
-                <ArrowBtn onClick={nextImgHandler}>
-                    <AiOutlineArrowRight size={20} />
-                </ArrowBtn>
-            </ArrowContainer>
+            {
+                matches &&
+                <ArrowContainer>
+                    <ArrowBtn onClick={prevImgHandler}>
+                        <AiOutlineArrowLeft size={20} />
+                    </ArrowBtn>
+                    <ArrowBtn onClick={nextImgHandler}>
+                        <AiOutlineArrowRight size={20} />
+                    </ArrowBtn>
+                </ArrowContainer>
+            }
         </MainImageContainer>
     )
 }

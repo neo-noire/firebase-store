@@ -3,9 +3,14 @@ import styled from 'styled-components'
 import { Card } from '../../Card/Card'
 import { Container } from '../../Layout/Navbar/Navbar'
 import { useGetFirebaseData } from '../../../hooks/useGetFirebaseData'
+import { devices } from '../../../styles/breakpoints'
 
 const CategoryContainer = styled(Container)`
     flex-wrap: wrap;
+    @media ${devices.tabletS} {
+        flex-wrap: nowrap;
+        overflow: auto;
+    }
 `
 
 export const TextCat = styled.h2`
@@ -13,7 +18,7 @@ export const TextCat = styled.h2`
     font-weight: 600;
     font-size: 20px;
     line-height: 24px;
-    text-transform: capitalize; 
+    text-transform: ${p => p.textTransform || 'capitalize'}; 
     color: #838383;
 `
 
@@ -24,7 +29,6 @@ export const Category = ({ name }) => {
     useEffect(() => {
         info.map(doc => setData(prev => [...prev, doc.data()]))
     }, [info])
-    console.log(data);
     return (
         <>
             {

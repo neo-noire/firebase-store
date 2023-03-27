@@ -1,12 +1,18 @@
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
+import { devices } from './breakpoints';
+
+
 
 export const Body = styled.div`
     min-width: 100vw;
     min-height:100vh;
     background: #EAEAEA;
-`
+    `
 export const Wrapper = styled.div`
+    min-height:100vh;
+    display: flex;
+    flex-direction: column;
     max-width: 1135px;
     margin: 0 auto; 
     padding: 0 1rem;
@@ -36,12 +42,18 @@ export const TextComponent = styled.span`
 
 export const FlexContainer = styled.div`
     width: ${p => p.width || 'initial'};
+    height: ${p => p.height || 'initial'};
     display: flex;
     align-items: ${p => p.alignItems || 'center'};
     flex-direction: ${p => p.flexDirection || 'row'};
     justify-content: ${p => p.justifyContent || 'initial'};
     gap: ${p => p.gap || 0};
     margin: ${p => p.margin || '0'};
+    flex: ${p => p.flex || 'initial'};
+    flex-wrap: ${p => p.wrap || 'no-wrap'};
+    @media ${devices.tabletS} {
+        flex-direction: ${p => p.directionMobile || 'row'};
+    }
 `
 
 export const AbsoluteContainer = styled.div`
@@ -92,6 +104,7 @@ export const ButtonMain = styled.button`
 `
 
 export const IconButton = styled.button`
+    position: relative;
     display: flex;
     align-items:center;
     justify-content:center;
@@ -108,6 +121,23 @@ export const IconButton = styled.button`
     }
 
 `
+export const Counter = styled.span`
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(20%, -20%);
+    height: 16px;
+    width: 16px;
+    font-size: .8rem;
+    padding: 10px;
+    border-radius: 50%;
+    background-color: #FFA542;
+ 
+    color: white;
+`
 
 export const LogoLink = styled(NavLink)`
     font-weight: 700;
@@ -116,4 +146,8 @@ export const LogoLink = styled(NavLink)`
     text-transform: uppercase;
     color: inherit;
     text-decoration: none;
+    grid-area: ${p => p.area};
+    @media ${devices.tabletS} {
+        text-align: center;
+    }
 `

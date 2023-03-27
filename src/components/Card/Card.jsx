@@ -1,16 +1,18 @@
-import React from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 import { Container } from '../Layout/Navbar/Navbar'
-import { AiFillStar, AiOutlineHeart } from 'react-icons/ai'
-import { IconButton } from '../../styles/styles'
-import img from '../../assets/airpodsPro.png'
+import { AiFillStar, AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
+import { FlexContainer, IconButton } from '../../styles/styles'
+import { useDispatch, useSelector } from 'react-redux'
+import { addToFav, removeFromFav } from '../../redux/favorite/favSlice'
+import { devices } from '../../styles/breakpoints'
 
 const CardContainer = styled.div`
     position: relative;
     padding: 20px;
-    width: calc(33.33% - .7rem);
-    min-width:300px;
+    width: calc(25% - 1rem);
+    min-width:250px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -19,11 +21,20 @@ const CardContainer = styled.div`
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
     border-radius: 30px;
     gap: 30px;
+    @media ${devices.laptop} {
+        width: calc(33.33% - .7rem)
+    }
+
+    @media ${devices.tablet} {
+        width: calc(50% - 1rem)
+    }
+    @media ${devices.tabletS} {
+        width: 70%;
+    }
 `
 
 const CardIMG = styled.img`
     object-fit: cover;
-    z-index: 1;
     height: 100%;
 `
 
@@ -47,11 +58,30 @@ export const Absolute = styled.div`
 
 
 export const Card = ({ data }) => {
+    const dispatch = useDispatch()
+    const favourite = useSelector(state => state.fav.items)
+    const [isFavorite, setIsFavorite] = useState(false)
 
+    const addToFavouriteHandler = () => {
+        dispatch(addToFav(data))
+    }
+
+    const removeFromFavouriteHandler = () => {
+        dispatch(removeFromFav(data.id))
+    }
+
+    useEffect(() => {
+        const item = favourite.find(item => item.id === data.id)
+        item
+            ? setIsFavorite(true)
+            : setIsFavorite(false)
+    }, [favourite])
 
     return (
         <CardContainer>
-            <CardIMG src={img} />
+            <FlexContainer height={'250px'}>
+                <CardIMG src={data?.image[0]} />
+            </FlexContainer>
             <Container width='100%' justifyContent='space-between'>
                 <ProdName to={`/product/${data.category}&${data.name}`}>
                     {data.name}
@@ -65,10 +95,17 @@ export const Card = ({ data }) => {
                 {data.rating}
             </Container>
             <Absolute>
-                <IconButton>
-                    <AiOutlineHeart size={20} />
-                </IconButton>
+                {
+                    isFavorite
+                        ? <IconButton onClick={removeFromFavouriteHandler}>
+                            <AiFillHeart size={20} />
+                        </IconButton>
+                        : <IconButton onClick={addToFavouriteHandler}>
+                            <AiOutlineHeart size={20} />
+                        </IconButton>
+                }
             </Absolute>
-        </CardContainer>
+        </CardContainer >
     )
 }
+
