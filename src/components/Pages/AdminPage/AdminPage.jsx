@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { ButtonMain, ImgComponent, RoundedContainer, TextComponent, Texth2 } from '../../../styles/styles'
-import { collection, getDocs, setDoc, doc } from 'firebase/firestore'
-import { db, storage } from '../../../config/firebase'
+import { ButtonMain, RoundedContainer, TextComponent, Texth2, Label, ResetButton } from '../../../styles/styles'
+import { setDoc, doc } from 'firebase/firestore'
+import { db } from '../../../config/firebase'
 import { CategorySelect } from './CategorySelect'
 import { ImageSlider } from './ImageSlider'
-import { uploadImage } from './ImagePromise'
+import { ImagesUpload } from './ImagePromise'
+import { ProductSelect } from './ProductSelect'
+import { nanoid } from 'nanoid'
 
 const AdminContainer = styled(RoundedContainer)`
     margin-top: 1rem;
@@ -13,7 +15,8 @@ const AdminContainer = styled(RoundedContainer)`
     flex:1 ;
 `
 
-const AdminInput = styled.input`
+export const AdminInput = styled.input`
+    width: 100%;
     height: 2rem;
     padding: 1rem;
     display: ${p => p.display};
@@ -25,59 +28,66 @@ const GridContainer = styled.div`
     grid-template-areas: 'cat image image'
                         'name image image'
                         'price image image'
-                        'quantity image image'
+                        'price image image'
+                        'quantity editImg editImg'
                         'desc desc desc';
     grid-gap: .2rem 1rem;
 `
 
-const GridItem = styled.div`
+export const GridItem = styled.div`
     display:flex;
-    flex-direction: column;
+    flex-direction: ${p => p.direction || 'column'};
+    justify-content: ${p => p.justify};
+    align-items: ${p => p.align};
+    gap: ${p => p.gap};
     height: ${p => p.height || 'initial'};
-    margin-bottom: 1rem;
+    margin-bottom: ${p => p.mb || '1rem'};
     grid-area: ${p => p.area};
 `
- const AdminPage = () => {
+
+
+
+const AdminPage = () => {
+    const [editExistingImages, setEditExistingImages] = useState(false);
     const [productData, setProductData] = useState({
         category: '',
         name: '',
         price: 0,
         description: '',
         quantity: 0,
+        id: '',
     })
-
     const [allImagesToUpload, setAllImagesToUpload] = useState([])
-    // const uploadImage = async (image) => {
-    //     const imageRef = ref(storage, `${productData.category}/${image.name}`)
-    //     const upladedImage = await uploadBytes(imageRef, image);
-    //     const imageUrl = await getDownloadURL(upladedImage.ref)
-    //     return imageUrl
-    // }
 
-    const ImagesUpload = async (images) => {
-        const imagePromises = Array.from(images, (item) => uploadImage(item, productData.category))
-
-        const imagesResponse = Promise.all(imagePromises)
-        return imagesResponse
-    }
     const addNewCollection = async () => {
-        console.log(allImagesToUpload);
         if (productData.category.length <= 3) return console.log('Please specify the category');
         if (allImagesToUpload.length === 0) return
-
-
-        const itemRef = doc(db, `products`, `${productData.category}`, 'items', `${productData.name + Math.random()}`)
+        const uniqueId = `${productData.name + `-` + nanoid(8)}`;
+        const itemRef = doc(db, `products`, `${productData.category}`, 'items', `${uniqueId}`)
 
         try {
-            ImagesUpload(allImagesToUpload).then(res => {
-                debugger
-                setDoc(itemRef, { ...productData, image: [...res], id: Math.random() }, { capital: true }, { merge: true })
+            ImagesUpload(allImagesToUpload, productData.category, uniqueId).then(res => {
+                setDoc(itemRef, { ...productData, id: uniqueId, image: [...res] }, { capital: true }, { merge: true })
             }).then(res => console.log(res))
             console.log('product id is');
         } catch (error) {
             console.log(error)
         }
     }
+
+    const editProduct = async () => {
+        if (productData.category.length <= 3) return console.log('Please specify the category');
+        if (!productData.id) return console.log('No such product in db');
+        const itemRef = doc(db, `products`, `${productData.category}`, 'items', `${productData.id}`)
+        const result = await setDoc(itemRef, { ...productData }, { capital: true }, { merge: true })
+        console.log(result);
+    }
+
+    const replaceImgHandler = () => {
+        alert('By choosing this value you confirm to rewrite original images in db')
+        setEditExistingImages(true)
+    }
+
 
     console.log(productData);
     return (
@@ -93,15 +103,28 @@ const GridItem = styled.div`
                         </TextComponent>
                         <CategorySelect setProductData={setProductData} />
                     </GridItem>
-                    <GridItem area='name'>
-                        <TextComponent>
-                            Product Name:
-                        </TextComponent>
-                        <AdminInput type={'text'} value={productData.name} onChange={(e) => setProductData({ ...productData, name: e.target.value })} />
-                    </GridItem>
+                    <ProductSelect productData={productData} setProductData={setProductData} />
                     <GridItem area='image' height='40vh'>
-                        <ImageSlider setAllImagesToUpload={setAllImagesToUpload} allImagesToUpload={allImagesToUpload} />
+                        <ImageSlider productData={productData} setAllImagesToUpload={setAllImagesToUpload} allImagesToUpload={allImagesToUpload} />
                     </GridItem>
+                    {
+                        productData.image &&
+                        <GridItem area='editImg' align='center' direction='row' justify='space-evenly' mb='0'>
+                            <Label>
+                                <input onClick={() => replaceImgHandler()}
+                                    type='radio'
+                                    name='imgEdit' />
+                                Replace original images
+                            </Label>
+                            <Label >
+                                <input onClick={() => setEditExistingImages(false)}
+                                    defaultChecked
+                                    type='radio'
+                                    name='imgEdit' />
+                                Keep original images
+                            </Label>
+                        </GridItem>
+                    }
                     <GridItem area='price'>
                         <TextComponent>
                             Product Price:
@@ -121,7 +144,22 @@ const GridItem = styled.div`
                         <textarea style={{ padding: '.5rem', height: '5rem' }} type={'text'} value={productData.description} onChange={(e) => setProductData({ ...productData, description: e.target.value })} />
                     </GridItem>
                 </GridContainer>
-                <ButtonMain onClick={addNewCollection}>Upload</ButtonMain>
+                <GridItem direction='row' gap='2rem'>
+
+                    {
+                        productData.id
+                            ? <ButtonMain onClick={editProduct}>Edit</ButtonMain>
+                            : <ButtonMain onClick={addNewCollection}>Upload</ButtonMain>
+                    }
+                    <ResetButton onClick={() => setProductData({
+                        category: '',
+                        name: '',
+                        price: 0,
+                        description: '',
+                        quantity: 0,
+                        id: '',
+                    })}>Reset</ResetButton>
+                </GridItem>
             </AdminContainer>
         </div>
     )

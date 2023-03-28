@@ -103,6 +103,13 @@ export const ButtonMain = styled.button`
     }
 `
 
+export const ResetButton = styled(ButtonMain)`
+    background-color: red;
+    &:hover{
+        background-color: #cc2626;
+    }
+`
+
 export const IconButton = styled.button`
     position: relative;
     display: flex;
@@ -149,5 +156,15 @@ export const LogoLink = styled(NavLink)`
     grid-area: ${p => p.area};
     @media ${devices.tabletS} {
         text-align: center;
+    }
+`
+
+export const Label = styled.label`
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    &:hover {
+        color: lightsalmon;
     }
 `

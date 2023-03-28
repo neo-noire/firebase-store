@@ -6,7 +6,6 @@ import { Oval } from 'react-loader-spinner'
 
 
 export const MainPage = () => {
-    const [loading, setLoading] = useState(false)
     const [data, load, error] = useGetFirebaseData('products')
 
 
@@ -21,7 +20,7 @@ export const MainPage = () => {
                     wrapperClass=""
                     visible={true}
                     ariaLabel='oval-loading'
-                    secondaryColor="#4fa94d"
+                    secondaryColor="#FFA542"
                     strokeWidth={2}
                     strokeWidthSecondary={2}
 

@@ -17,7 +17,7 @@ const HeroSection = styled.section`
 `
 
 const Text = styled.h1`
-    max-width: 250px;
+    max-width: 230px;
     color: ${props => props.color || 'inherit'};
     @media ${devices.mobileL} {
         font-size: 1.2rem;
@@ -38,7 +38,7 @@ export const Hero = () => {
     return (
         <HeroSection>
             <Text color="white">
-                Аксессуары для
+                Accessories for
                 Iphone 13 Pro Max
             </Text>
             <ImageStyled src={hero} />

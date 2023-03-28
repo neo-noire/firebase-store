@@ -1,9 +1,10 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const stripe = require("stripe")('sk_test_51MhD15B0niWLCqAgRKqemppdz85d9VTbTGR1U3MlWhEf4LIk2Yii8lIRcRbdCvuXqx7lOcI0PjURCawIbPVokZ0800RCffgbgK');
-
 const admin = require("firebase-admin");
+require('dotenv').config()
+
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const serviceAccount = require("./firestore.json");
 
@@ -19,51 +20,6 @@ app.use(cors({ origin: true }))
 app.use(express.urlencoded({ extended: true }))
 
 
-// Get all available categories of products
-app.get('/categories', async (req, res) => {
-
-    const catRef = db.collection('products')
-    const doc = await catRef.get()
-    const array = []
-    doc.forEach(item => array.push(item.id))
-
-    res.status(200).send(array)
-})
-
-//get products list from specific category
-app.get('/products', async (req, res) => {
-
-    const productsRef = db.collection('products').doc(`${req.body.category}`).collection('items')
-    const doc = await productsRef.get()
-    const arrayOfProducts = []
-    doc.forEach(item => arrayOfProducts.push(item.data()))
-
-    res.status(200).send(arrayOfProducts)
-})
-
-//get specific product
-app.get('/product', async (req, res) => {
-
-    const productsRef = db.collection('products').doc(`${req.body.category}`).collection('items').doc(`${req.body.name}`)
-    const doc = await productsRef.get()
-
-    res.status(200).send(doc.data())
-})
-
-//get list of products from cart
-app.get('/cart/products', async (req, res) => {
-    const products = req.body.products;
-
-    const allProducts = await Promise.all(
-        products.map(async (item) => {
-            const productsRef = db.collection('products').doc(`${item.category}`).collection('items').doc(`${item.name}`)
-            const doc = await productsRef.get()
-            return doc.data()
-        })
-    )
-
-    res.status(200).send(allProducts)
-})
 
 //stripe session checkout function
 app.post("/create-payment-session", async (req, res) => {
@@ -71,7 +27,7 @@ app.post("/create-payment-session", async (req, res) => {
 
     const allProducts = await Promise.all(
         items.map(async (item) => {
-            const productsRef = db.collection('products').doc(`${item.category}`).collection('items').doc(`${item.name}`)
+            const productsRef = db.collection('products').doc(`${item.category}`).collection('items').doc(`${item.id}`)
             const doc = await productsRef.get()
             const product = doc.data()
 
@@ -92,8 +48,8 @@ app.post("/create-payment-session", async (req, res) => {
     const session = await stripe.checkout.sessions.create({
         line_items: allProducts,
         mode: 'payment',
-        success_url: `http://127.0.0.1:5173?success=true`,
-        cancel_url: `http://127.0.0.1:5173?canceled=true`,
+        success_url: process.env.MY_APP_URL + "?success=true",
+        cancel_url: process.env.MY_APP_URL + "?canceled=true",
     });
     res.header("Access-Control-Allow-Origin", "*");
     res.status(200).send({ url: session.url })

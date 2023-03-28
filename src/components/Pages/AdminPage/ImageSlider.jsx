@@ -9,8 +9,8 @@ const SliderHorizontalImages = styled(SliderContainer)`
     height: 30%;
     overflow: hidden;
 `
-export const ImageSlider = ({ setAllImagesToUpload, allImagesToUpload }) => {
-    const [mainImage, setMainImage] = useState()
+export const ImageSlider = ({ setAllImagesToUpload, allImagesToUpload, productData }) => {
+    const [mainImage, setMainImage] = useState('')
     const [allImagesURL, setAllImagesURL] = useState([])
 
     const imageInputHandler = (e) => {
@@ -25,30 +25,39 @@ export const ImageSlider = ({ setAllImagesToUpload, allImagesToUpload }) => {
         }
     }
 
+    useEffect(() => {
+        if (productData.image) {
+            setAllImagesURL([])
+            setMainImage('')
+            productData.image.map(url => setAllImagesURL(prev => [...prev, url]))
+        }
+    }, [productData])
+
     return (
-        <MainImageContainer width='100%' borderRight='none' height='100%'>
-            <div style={{ height: '70%' }}>
-                <BigImage
-                    src={mainImage || blank}
-                />
-            </div>
+        <>
+            <MainImageContainer width='100%' borderRight='none' height='100%'>
+                <div style={{ height: '70%' }}>
+                    <BigImage
+                        src={mainImage || blank}
+                    />
+                </div>
 
-            <SliderHorizontalImages>
-                {
-                    allImagesURL && allImagesURL?.map((item, idx) =>
-                        <SmallImage
-                            key={idx}
-                            onClick={() => {
-                                setMainImage(item)
-                            }}
-                            src={item} />)
-                }
-                <label style={{ height: '100%' }} >
-                    <SmallImage src={addImage} />
-                    <input style={{ display: 'none' }} type='file' onChange={imageInputHandler} />
-                </label>
-
-            </SliderHorizontalImages>
-        </MainImageContainer>
+                <SliderHorizontalImages>
+                    {
+                        allImagesURL && allImagesURL?.map((item, idx) =>
+                            <SmallImage
+                                key={idx}
+                                onClick={() => {
+                                    setMainImage(item)
+                                }}
+                                src={item} />)
+                    }
+                    <label style={{ height: '100%' }} >
+                        <SmallImage src={addImage} />
+                        <input accept="image/*" style={{ display: 'none' }} type='file' onChange={imageInputHandler} />
+                    </label>
+                </SliderHorizontalImages>
+            </MainImageContainer>
+        </>
     )
 }

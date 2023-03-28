@@ -76,14 +76,14 @@ export const Card = ({ data }) => {
             ? setIsFavorite(true)
             : setIsFavorite(false)
     }, [favourite])
-
+    
     return (
         <CardContainer>
             <FlexContainer height={'250px'}>
                 <CardIMG src={data?.image[0]} />
             </FlexContainer>
             <Container width='100%' justifyContent='space-between'>
-                <ProdName to={`/product/${data.category}&${data.name}`}>
+                <ProdName to={`/product/${data.category}&${data.id}`}>
                     {data.name}
                 </ProdName>
                 <ProdPrice>

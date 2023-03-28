@@ -33,13 +33,14 @@ export const FullCart = () => {
     const handleCheckoutSession = () => {
         const ordered = cart.map(item => (
             {
-                name: item.name,
+                id: item.id,
                 category: item.category,
                 quantity: item.ordered,
             }))
         console.log(ordered);
         checkoutSession(ordered)
     }
+
     return (
         <div style={{ flex: '1' }} >
             <Texth2>
