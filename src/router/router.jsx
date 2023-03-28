@@ -1,12 +1,13 @@
+import React, { Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
-import { LoginPage } from "../components/Pages/LoginPage/LoginPage.jsx";
 import { Layout } from "../components/Layout/Layout";
 import { MainPage } from "../components/Pages/MainPage/MainPage.jsx";
 import { ProductPage } from "../components/Pages/ProductPage/ProductPage.jsx";
-import { AuthPage } from "../components/Pages/AuthPage/AuthPage.jsx";
 import { Cart } from "../components/Pages/Cart/Cart.jsx";
 import { FavouritePage } from "../components/Pages/FouritePage/FavouritePage.jsx";
-import { AdminPage } from "../components/Pages/AdminPage/AdminPage.jsx";
+const LoginPage = React.lazy(() => import("../components/Pages/LoginPage/LoginPage.jsx"))
+const AuthPage = React.lazy(() => import("../components/Pages/AuthPage/AuthPage.jsx"));
+const AdminPage = React.lazy(() => import("../components/Pages/AdminPage/AdminPage.jsx"));
 
 
 
@@ -33,16 +34,25 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/admin',
-                element: <AdminPage />
+                element:
+                    <Suspense fallback={<div>Loading</div>}>
+                        <AdminPage />
+                    </Suspense>
             }
         ]
     },
     {
         path: '/login',
-        element: <LoginPage />
+        element:
+            <Suspense fallback={<div>Loading</div>}>
+                <LoginPage />
+            </Suspense>
     },
     {
         path: '/auth',
-        element: <AuthPage />
+        element:
+            <Suspense fallback={<div>Loading</div>}>
+                <AuthPage />
+            </Suspense>
     }
 ]);

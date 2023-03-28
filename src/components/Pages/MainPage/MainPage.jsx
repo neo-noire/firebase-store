@@ -1,21 +1,38 @@
 import React, { useEffect, useState } from 'react'
 import { Category } from './Category'
 import { Hero } from './Hero'
-import { useCollectionData } from 'react-firebase-hooks/firestore'
-import { collection, addDoc, getDocs, setDoc, doc } from 'firebase/firestore'
-import { db } from '../../../config/firebase'
 import { useGetFirebaseData } from '../../../hooks/useGetFirebaseData'
+import { Oval } from 'react-loader-spinner'
 
 
 export const MainPage = () => {
-    const [data, loading, error] = useGetFirebaseData('products')
-  
+    const [loading, setLoading] = useState(false)
+    const [data, load, error] = useGetFirebaseData('products')
+
+
+    if (load) {
+        return (
+            <div style={{ display: 'grid', placeItems: 'center', backgroundColor: '#EAEAEA', flex: '1' }}>
+                <Oval
+                    height={80}
+                    width={80}
+                    color="gray"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                    visible={true}
+                    ariaLabel='oval-loading'
+                    secondaryColor="#4fa94d"
+                    strokeWidth={2}
+                    strokeWidthSecondary={2}
+
+                />
+            </div>
+        )
+    }
+
     return (
         <>
             <Hero />
-            {
-                loading && <div>Loading...</div>
-            }
             {
                 data?.map((item, idx) => <Category key={item + idx} name={item.id} />)
             }

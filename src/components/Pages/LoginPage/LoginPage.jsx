@@ -7,7 +7,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { auth, googleProvider } from '../../../config/firebase';
 import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 
-export const LoginPage = () => {
+ const LoginPage = () => {
     const navigate = useNavigate()
 
     const [identifier, setIdentifier] = useState('')
@@ -104,3 +104,5 @@ export const LoginPage = () => {
         </div>
     )
 }
+
+export default LoginPage;

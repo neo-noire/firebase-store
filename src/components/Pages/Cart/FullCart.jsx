@@ -31,14 +31,12 @@ export const FullCart = () => {
     }, [cart])
 
     const handleCheckoutSession = () => {
-        const ordered = cart.map(item => {
-            return {
+        const ordered = cart.map(item => (
+            {
                 name: item.name,
                 category: item.category,
                 quantity: item.ordered,
-                image: item.image[0],
-            }
-        })
+            }))
         console.log(ordered);
         checkoutSession(ordered)
     }

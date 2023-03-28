@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { ButtonMain, ImgComponent, RoundedContainer, TextComponent, Texth2 } from '../../../styles/styles'
 import { collection, getDocs, setDoc, doc } from 'firebase/firestore'
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db, storage } from '../../../config/firebase'
-import blank from '../../../assets/blank.png'
 import { CategorySelect } from './CategorySelect'
 import { ImageSlider } from './ImageSlider'
 import { uploadImage } from './ImagePromise'
@@ -39,7 +37,7 @@ const GridItem = styled.div`
     margin-bottom: 1rem;
     grid-area: ${p => p.area};
 `
-export const AdminPage = () => {
+ const AdminPage = () => {
     const [productData, setProductData] = useState({
         category: '',
         name: '',
@@ -128,3 +126,5 @@ export const AdminPage = () => {
         </div>
     )
 }
+
+export default AdminPage;

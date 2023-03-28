@@ -17,10 +17,10 @@ export const useGetFirebaseData = (path) => {
                 data.forEach(doc => {
                     setData(prev => [...prev, doc])
                 })
+                setLoading(false)
 
             } catch (error) {
                 setError(error)
-            } finally {
                 setLoading(false)
             }
         }

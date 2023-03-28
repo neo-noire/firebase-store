@@ -6,7 +6,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { NavLink as Link, useNavigate } from 'react-router-dom'
 
 
-export const AuthPage = () => {
+ const AuthPage = () => {
     const navigate = useNavigate()
     const [email, setEmail] = useState('')
     const [userName, setUserName] = useState('')
@@ -99,3 +99,5 @@ export const AuthPage = () => {
         </div>
     )
 }
+
+export default AuthPage;

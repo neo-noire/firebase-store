@@ -29,6 +29,9 @@ export const Category = ({ name }) => {
     useEffect(() => {
         info.map(doc => setData(prev => [...prev, doc.data()]))
     }, [info])
+
+
+
     return (
         <>
             {

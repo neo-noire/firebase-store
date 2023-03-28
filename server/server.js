@@ -53,7 +53,7 @@ app.get('/product', async (req, res) => {
 //get list of products from cart
 app.get('/cart/products', async (req, res) => {
     const products = req.body.products;
-    console.log(products);
+
     const allProducts = await Promise.all(
         products.map(async (item) => {
             const productsRef = db.collection('products').doc(`${item.category}`).collection('items').doc(`${item.name}`)
@@ -65,15 +65,16 @@ app.get('/cart/products', async (req, res) => {
     res.status(200).send(allProducts)
 })
 
+//stripe session checkout function
 app.post("/create-payment-session", async (req, res) => {
     const items = req.body.products;
-    console.log(items);
+
     const allProducts = await Promise.all(
         items.map(async (item) => {
             const productsRef = db.collection('products').doc(`${item.category}`).collection('items').doc(`${item.name}`)
             const doc = await productsRef.get()
             const product = doc.data()
-            console.log(product);
+
             return {
                 price_data: {
                     currency: "usd",
@@ -95,7 +96,7 @@ app.post("/create-payment-session", async (req, res) => {
         cancel_url: `http://127.0.0.1:5173?canceled=true`,
     });
     res.header("Access-Control-Allow-Origin", "*");
-    res.status(200).send(session.url)
+    res.status(200).send({ url: session.url })
 });
 
 //add product to firestore
